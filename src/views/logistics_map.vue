@@ -17,6 +17,7 @@
 <script>
 import { Input, Button, Spin } from "ant-design-vue";
 import iconDelivery from "@/assets/icon_delivery.gif";
+import { setZoom } from "@/utils/index.js";
 export default {
   components: {
     AInput: Input,
@@ -189,9 +190,15 @@ export default {
       };
       // 创建 LabelMarker 实例
       var labelMarker = [];
+      let covers = [];
       // 骑手信息
       if (0 < list.expressmanlist.length) {
         list.expressmanlist.forEach((item) => {
+          let newDatalat = {
+            longitude: item.locations.split(",")[0],
+            latitude: item.locations.split(",")[1],
+          };
+          covers.push(newDatalat);
           labelMarker.push(
             new AMap.LabelMarker({
               name: item.eid,
@@ -209,8 +216,14 @@ export default {
           );
         });
       }
+
       if (0 < list.orderlist.length) {
         list.orderlist.forEach((item) => {
+          let newDatalat = {
+             longitude: item.shop_info.lng,
+            latitude: item.shop_info.lat,
+          };
+          covers.push(newDatalat);
           // 卖家信息
           labelMarker.push(
             new AMap.LabelMarker({
@@ -262,6 +275,22 @@ export default {
       }
       this.oldLabelsLayer = labelsLayer;
       this.map.add(labelsLayer);
+      let centerZoom = setZoom(covers);
+
+      if (
+        centerZoom.zoom == this.zoom &&
+        centerZoom.cenLng == this.log &&
+        centerZoom.cenLat == this.lat
+      ) {
+        return;
+      }
+      this.zoom = centerZoom.zoom;
+      this.log = centerZoom.cenLng;
+      this.lat = centerZoom.cenLat;
+      this.map.setZoomAndCenter(centerZoom.zoom, [
+        centerZoom.cenLng,
+        centerZoom.cenLat,
+      ]);
     },
     // 计算当前商家订单数量
     calculateOrder(list, cid) {
