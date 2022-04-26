@@ -105,7 +105,6 @@ export default {
           };
           series.push(newsData);
         });
-
         this.options = {
           tooltip: {
             trigger: "axis",
@@ -203,6 +202,12 @@ export default {
           ],
           series: series,
         };
+        if (this.chart) {
+          this.chart.dispatchAction({
+            type: "hideTip",
+          });
+          this.setTooltipAutoplay();
+        }
       },
       immediate: true,
       deep: true,

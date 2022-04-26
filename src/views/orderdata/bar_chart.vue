@@ -187,7 +187,12 @@ export default {
           ],
           series: series,
         };
-        this.setTooltipAutoplay();
+       if (this.chart) {
+          this.chart.dispatchAction({
+            type: "hideTip",
+          });
+          this.setTooltipAutoplay();
+        }
       },
       immediate: true,
       deep: true,
